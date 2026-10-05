@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kuis Perlawanan Pattimura</title>
+  <style>
+    * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: #f4f6f8; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+    .quiz-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 500px; text-align: center; }
+    h2 { color: #8b0000; margin-bottom: 10px; }
+    .question { font-size: 1.1rem; font-weight: bold; margin-bottom: 20px; color: #333; text-align: left; }
+    .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .btn-opt { background: #e0e0e0; border: none; padding: 12px; border-radius: 8px; font-size: 1rem; cursor: pointer; transition: 0.2s; text-align: left; }
+    .btn-opt:hover { background: #d0d0d0; }
+    .btn-opt.correct { background: #28a745 !important; color: white; }
+    .btn-opt.wrong { background: #dc3545 !important; color: white; }
+    .next-btn { background: #8b0000; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 1rem; display: none; margin: 0 auto; }
+    .score-board { font-size: 1.3rem; font-weight: bold; color: #2c3e50; }
+    .restart-btn { background: #2c3e50; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin-top: 15px; }
+  </style>
+</head>
+<body>
+
+<div class="quiz-card" id="quizContainer">
+  <h2>Kuis Sejarah: Pattimura</h2>
+  <hr style="border: 0; border-top: 1px solid #ccc; margin-bottom: 20px;">
+  <div id="quizContent">
+    <div class="question" id="questionText">Pertanyaan...</div>
+    <div class="options" id="optionsContainer"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Lanjut</button>
+  </div>
+</div>
+
+<script>
+  const questions = [
+    {
+      q: "1. Apa penyebab utama rakyat Maluku melakukan perlawanan pada tahun 1817?",
+      options: ["Perebutan wilayah kerajaan", "Monopoli perdagangan & penyerahan hasil bumi", "Perang antar-suku", "Kerja paksa pembuatan jalan"],
+      answer: 1
+    },
+    {
+      q: "2. Siapa nama asli dari pemimpin perlawanan rakyat Maluku, Kapitan Pattimura?",
+      options: ["Sultan Hasanuddin", "Tuanku Imam Bonjol", "Thomas Matulessy", "Pangeran Diponegoro"],
+      answer: 2
+    },
+    {
+      q: "3. Benteng milik Belanda di Saparua yang berhasil direbut oleh Pattimura adalah...",
+      options: ["Benteng Duurstede", "Benteng Rotterdam", "Benteng Vredeburg", "Benteng Marlborough"],
+      answer: 0
+    },
+    {
+      q: "4. Pejuang perempuan yang gigih membantu Pattimura dalam perlawanan adalah...",
+      options: ["Cut Nyak Dien", "R.A. Kartini", "Dewi Sartika", "Christina Martha Tiahahu"],
+      answer: 3
+    },
+    {
+      q: "5. Tanggal berapa Kapitan Pattimura dijatuhi hukuman mati oleh Belanda?",
+      options: ["17 Agustus 1945", "16 Desember 1817", "10 November 1928", "20 Mei 1908"],
+      answer: 1
+    }
+  ];
+
+  let currentIdx = 0;
+  let score = 0;
+
+  function loadQuestion() {
+    const qData = questions[currentIdx];
+    document.getElementById("questionText").innerText = qData.q;
+    const optsContainer = document.getElementById("optionsContainer");
+    optsContainer.innerHTML = "";
+    document.getElementById("nextBtn").style.display = "none";
+
+    qData.options.forEach((opt, idx) => {
+      const btn = document.createElement("button");
+      btn.className = "btn-opt";
+      btn.innerText = opt;
+      btn.onclick = () => selectOption(btn, idx, qData.answer);
+      optsContainer.appendChild(btn);
+    });
+  }
+
+  function selectOption(btn, selectedIdx, correctIdx) {
+    const allBtns = document.querySelectorAll(".btn-opt");
+    allBtns.forEach(b => b.disabled = true);
+
+    if (selectedIdx === correctIdx) {
+      btn.classList.add("correct");
+      score++;
+    } else {
+      btn.classList.add("wrong");
+      allBtns[correctIdx].classList.add("correct");
+    }
+    document.getElementById("nextBtn").style.display = "block";
+  }
+
+  function nextQuestion() {
+    currentIdx++;
+    if (currentIdx < questions.length) {
+      loadQuestion();
+    } else {
+      showScore();
+    }
+  }
+
+  function showScore() {
+    const container = document.getElementById("quizContent");
+    container.innerHTML = `
+      <div class="score-board">
+        Nilai Kamu: <br>
+        <span style="font-size: 2.5rem; color: #8b0000;">${score * 20}</span> / 100
+      </div>
+      <p>Kamu menjawab ${score} dari ${questions.length} soal dengan benar.</p>
+      <button class="restart-btn" onclick="location.reload()">Ulangi Kuis</button>
+    `;
+  }
+
+  loadQuestion();
+</script>
+
+</body>
+</html>
